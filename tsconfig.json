@@ -2,10 +2,10 @@
   "compilerOptions": {
     "outDir": "./dist/gen/",
     "sourceMap": true,
-    "noImplicitAny": true,
     "module": "commonjs",
     "target": "es5",
-    "jsx": "react"
+    "noImplicitReturns": true,
+    "strict": true
   },
   "include": ["./src/**/*"]
 }
