@@ -22,9 +22,14 @@ function moveTop<T>(popper: T[], pusher: T[]) {
   pusher.push(top);
 }
 
+function without<T>(arr: T[], idx: number) {
+  return arr.slice(0, idx).concat(arr.slice(idx + 1));
+}
+
 interface SingleState {
   waitingPlayers: string[];
   actedPlayers: string[];
+  deadPlayers: string[];
 }
 
 class GameState {
@@ -120,7 +125,8 @@ class App {
             if (this._entities.length > 0) {
               this._activeGame = new GameState({
                 waitingPlayers: this._entities,
-                actedPlayers: []
+                actedPlayers: [],
+                deadPlayers: []
               });
             }
           }
@@ -132,21 +138,50 @@ class App {
 
   private static _game(activeGame: GameState) {
     const currentState = activeGame.current();
+    const renderEntity = (
+      entity: string,
+      entityType: "waiting" | "acted" | "dead",
+      idx: number
+    ) =>
+      m(
+        ".entity",
+        m(
+          ".entity-text",
+          {
+            onclick: () => {
+              if (entityType === "waiting") {
+                App._act(activeGame, idx);
+              }
+            }
+          },
+          entity
+        ),
+        m(
+          ".close-button",
+          {
+            onclick: () => {
+              if (entityType !== "dead") {
+                App._kill(activeGame, entityType, idx);
+              }
+            }
+          },
+          "☠️"
+        )
+      );
+
     return m(
       "div",
       m("h1", "Already acted"),
-      currentState.actedPlayers.map(player => m(".entity .acted", player)),
+      currentState.actedPlayers.map((entity, idx) =>
+        renderEntity(entity, "acted", idx)
+      ),
       m("h1", "Waiting to act"),
-      currentState.waitingPlayers.map((player, idx) =>
-        m(
-          ".entity",
-          {
-            onclick: () => {
-              App._act(activeGame, idx);
-            }
-          },
-          player
-        )
+      currentState.waitingPlayers.map((entity, idx) =>
+        renderEntity(entity, "waiting", idx)
+      ),
+      m("h1", "Dead"),
+      currentState.deadPlayers.map((entity, idx) =>
+        renderEntity(entity, "dead", idx)
       ),
       m(
         ".button-row",
@@ -161,6 +196,7 @@ class App {
             disabled: currentState.waitingPlayers.length != 0,
             onclick: () => {
               activeGame.push({
+                ...currentState,
                 waitingPlayers: currentState.actedPlayers.slice(),
                 actedPlayers: []
               });
@@ -181,10 +217,34 @@ class App {
     const currentState = activeGame.current();
     const actedPlayer = currentState.waitingPlayers[idx];
     activeGame.push({
+      ...currentState,
       waitingPlayers: currentState.waitingPlayers
         .slice(0, idx)
         .concat(currentState.waitingPlayers.slice(idx + 1)),
       actedPlayers: currentState.actedPlayers.concat([actedPlayer])
+    });
+  }
+
+  private static _kill(
+    activeGame: GameState,
+    entityType: "waiting" | "acted",
+    idx: number
+  ) {
+    const currentState = activeGame.current();
+    const deadPlayer =
+      entityType === "waiting"
+        ? currentState.waitingPlayers[idx]
+        : currentState.actedPlayers[idx];
+    activeGame.push({
+      waitingPlayers:
+        entityType === "waiting"
+          ? without(currentState.waitingPlayers, idx)
+          : currentState.waitingPlayers,
+      actedPlayers:
+        entityType === "acted"
+          ? without(currentState.actedPlayers, idx)
+          : currentState.actedPlayers,
+      deadPlayers: currentState.deadPlayers.concat([deadPlayer])
     });
   }
 }
