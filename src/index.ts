@@ -40,6 +40,23 @@ class App {
             "X"
           )
         )
+      ),
+      m("input", { type: "text", id: "new-entity" }),
+      m(
+        "button",
+        {
+          onclick: () => {
+            const entity = document.getElementById("new-entity");
+            if (entity != null) {
+              const text = (entity as any).value as string | undefined | null;
+              if (text != null) {
+                this._entities.push(text);
+              }
+              (entity as any).value = "";
+            }
+          }
+        },
+        "Add new combatant"
       )
     );
   }
