@@ -106,7 +106,21 @@ class App {
           },
           player
         )
-      )
+      ),
+      currentState.waitingPlayers.length === 0
+        ? m(
+            "button",
+            {
+              onclick: () => {
+                activeGame.push({
+                  waitingPlayers: currentState.actedPlayers.slice(),
+                  actedPlayers: []
+                });
+              }
+            },
+            "Next round"
+          )
+        : m("div")
     );
   }
 
