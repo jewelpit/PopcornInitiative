@@ -1,5 +1,27 @@
 import * as m from "mithril";
 
+function assert(condition: boolean, message?: string) {
+  if (condition) {
+    return;
+  }
+
+  const msg = message != null ? message : "Assertion failed";
+  throw new Error(msg);
+}
+
+function nonNull<T>(item: T | null | undefined) {
+  if (item != null) {
+    return item;
+  }
+
+  throw new Error("Item was null");
+}
+
+function moveTop<T>(popper: T[], pusher: T[]) {
+  const top = nonNull(popper.pop());
+  pusher.push(top);
+}
+
 interface SingleState {
   waitingPlayers: string[];
   actedPlayers: string[];
@@ -21,6 +43,25 @@ class GameState {
   push(newState: SingleState) {
     this._undoStack.push(newState);
     this._redoStack = [];
+  }
+
+  canUndo() {
+    // Always preserve the first element
+    return this._undoStack.length > 1;
+  }
+
+  canRedo() {
+    return this._redoStack.length > 0;
+  }
+
+  undo() {
+    assert(this.canUndo());
+    moveTop(this._undoStack, this._redoStack);
+  }
+
+  redo() {
+    assert(this.canRedo());
+    moveTop(this._redoStack, this._undoStack);
   }
 }
 
@@ -107,20 +148,32 @@ class App {
           player
         )
       ),
-      currentState.waitingPlayers.length === 0
-        ? m(
-            "button",
-            {
-              onclick: () => {
-                activeGame.push({
-                  waitingPlayers: currentState.actedPlayers.slice(),
-                  actedPlayers: []
-                });
-              }
-            },
-            "Next round"
-          )
-        : m("div")
+      m(
+        ".button-row",
+        m(
+          "button",
+          { disabled: !activeGame.canUndo(), onclick: () => activeGame.undo() },
+          "Undo"
+        ),
+        m(
+          "button",
+          {
+            disabled: currentState.waitingPlayers.length != 0,
+            onclick: () => {
+              activeGame.push({
+                waitingPlayers: currentState.actedPlayers.slice(),
+                actedPlayers: []
+              });
+            }
+          },
+          "Next round"
+        ),
+        m(
+          "button",
+          { disabled: !activeGame.canRedo(), onclick: () => activeGame.redo() },
+          "Redo"
+        )
+      )
     );
   }
 
