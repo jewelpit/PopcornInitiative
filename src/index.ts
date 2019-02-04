@@ -7,15 +7,20 @@ interface SingleState {
 
 class GameState {
   private _undoStack: SingleState[];
-  private _index: number;
+  private _redoStack: SingleState[];
 
   constructor(init: SingleState) {
     this._undoStack = [init];
-    this._index = 0;
+    this._redoStack = [];
   }
 
   current() {
-    return this._undoStack[this._index];
+    return this._undoStack[this._undoStack.length - 1];
+  }
+
+  push(newState: SingleState) {
+    this._undoStack.push(newState);
+    this._redoStack = [];
   }
 }
 
@@ -91,8 +96,29 @@ class App {
       m("h1", "Already acted"),
       currentState.actedPlayers.map(player => m(".entity .acted", player)),
       m("h1", "Waiting to act"),
-      currentState.waitingPlayers.map(player => m(".entity", player))
+      currentState.waitingPlayers.map((player, idx) =>
+        m(
+          ".entity",
+          {
+            onclick: () => {
+              App._act(activeGame, idx);
+            }
+          },
+          player
+        )
+      )
     );
+  }
+
+  private static _act(activeGame: GameState, idx: number) {
+    const currentState = activeGame.current();
+    const actedPlayer = currentState.waitingPlayers[idx];
+    activeGame.push({
+      waitingPlayers: currentState.waitingPlayers
+        .slice(0, idx)
+        .concat(currentState.waitingPlayers.slice(idx + 1)),
+      actedPlayers: currentState.actedPlayers.concat([actedPlayer])
+    });
   }
 }
 
