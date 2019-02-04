@@ -49,7 +49,7 @@ class App {
             const entity = document.getElementById("new-entity");
             if (entity != null) {
               const text = (entity as any).value as string | undefined | null;
-              if (text != null) {
+              if (text != null && text !== "") {
                 this._entities.push(text);
               }
               (entity as any).value = "";
