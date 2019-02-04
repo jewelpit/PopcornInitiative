@@ -1,6 +1,9 @@
 import * as m from "mithril";
 
-interface SingleState {}
+interface SingleState {
+  waitingPlayers: string[];
+  actedPlayers: string[];
+}
 
 class GameState {
   private _undoStack: SingleState[];
@@ -9,6 +12,10 @@ class GameState {
   constructor(init: SingleState) {
     this._undoStack = [init];
     this._index = 0;
+  }
+
+  current() {
+    return this._undoStack[this._index];
   }
 }
 
@@ -33,7 +40,7 @@ class App {
       this._entities.map((entity, idx) =>
         m(
           ".entity",
-          entity,
+          m(".entity-text", entity),
           m(
             ".close-button",
             { onclick: () => this._entities.splice(idx, 1) },
@@ -57,12 +64,35 @@ class App {
           }
         },
         "Add new combatant"
+      ),
+      m(".spacer"),
+      m(
+        "button",
+        {
+          class: "centered-block",
+          onclick: () => {
+            if (this._entities.length > 0) {
+              this._activeGame = new GameState({
+                waitingPlayers: this._entities,
+                actedPlayers: []
+              });
+            }
+          }
+        },
+        "Fight!"
       )
     );
   }
 
   private static _game(activeGame: GameState) {
-    return m("Active game");
+    const currentState = activeGame.current();
+    return m(
+      "div",
+      m("h1", "Already acted"),
+      currentState.actedPlayers.map(player => m(".entity .acted", player)),
+      m("h1", "Waiting to act"),
+      currentState.waitingPlayers.map(player => m(".entity", player))
+    );
   }
 }
 
