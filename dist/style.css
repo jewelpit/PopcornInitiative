@@ -35,6 +35,11 @@
   display: inline-block;
 }
 
+.button-row {
+  display: flex;
+  justify-content: center;
+}
+
 .acted {
   font-style: italic;
 }
