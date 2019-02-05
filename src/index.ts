@@ -283,7 +283,7 @@ class App {
 }
 
 m.mount(
-  document.body,
+  nonNull(document.getElementById("app")),
   new App([
     "Dissection Dissertator",
     "Illuminated Bun-Sen",
