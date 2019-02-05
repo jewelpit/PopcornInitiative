@@ -52,6 +52,10 @@ h1 {
   display: inline-block;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .button-row {
   display: flex;
   justify-content: center;
