@@ -144,7 +144,11 @@ class App {
       idx: number
     ) =>
       m(
-        ".entity",
+        entityType === "acted"
+          ? ".entity .acted"
+          : entityType === "dead"
+          ? ".entity .dead"
+          : ".entity",
         m(
           ".entity-text",
           {
