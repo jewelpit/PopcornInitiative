@@ -161,17 +161,19 @@ class App {
           },
           entity
         ),
-        m(
-          ".close-button",
-          {
-            onclick: () => {
-              if (entityType !== "dead") {
-                App._kill(activeGame, entityType, idx);
-              }
-            }
-          },
-          "☠️"
-        )
+        entityType !== "dead"
+          ? [
+              m(
+                ".close-button",
+                {
+                  onclick: () => {
+                    App._kill(activeGame, entityType, idx);
+                  }
+                },
+                "☠️"
+              )
+            ]
+          : []
       );
 
     const renderList = (list: m.Vnode[]) => {
