@@ -173,20 +173,36 @@ class App {
         )
       );
 
+    const renderList = (list: m.Vnode[]) => {
+      console.log(list);
+      if (list.length === 0) {
+        return [m(".italic", "None")];
+      } else {
+        return list;
+      }
+    };
+
     return m(
       "div",
       m("h1", "Already acted"),
-      currentState.actedPlayers.map((entity, idx) =>
-        renderEntity(entity, "acted", idx)
+      renderList(
+        currentState.actedPlayers.map((entity, idx) =>
+          renderEntity(entity, "acted", idx)
+        )
       ),
       m("h1", "Waiting to act"),
-      currentState.waitingPlayers.map((entity, idx) =>
-        renderEntity(entity, "waiting", idx)
+      renderList(
+        currentState.waitingPlayers.map((entity, idx) =>
+          renderEntity(entity, "waiting", idx)
+        )
       ),
       m("h1", "Dead"),
-      currentState.deadPlayers.map((entity, idx) =>
-        renderEntity(entity, "dead", idx)
+      renderList(
+        currentState.deadPlayers.map((entity, idx) =>
+          renderEntity(entity, "dead", idx)
+        )
       ),
+      m(".spacer"),
       m(
         ".button-row",
         m(
