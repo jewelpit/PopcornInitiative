@@ -80,7 +80,7 @@ class App {
   view() {
     return m(
       ".wrapper",
-      this._activeGame == null ? this._main() : App._game(this._activeGame)
+      this._activeGame == null ? this._main() : this._game()
     );
   }
 
@@ -136,7 +136,8 @@ class App {
     );
   }
 
-  private static _game(activeGame: GameState) {
+  private _game() {
+    const activeGame = nonNull(this._activeGame);
     const currentState = activeGame.current();
     const renderEntity = (
       entity: string,
@@ -174,7 +175,6 @@ class App {
       );
 
     const renderList = (list: m.Vnode[]) => {
-      console.log(list);
       if (list.length === 0) {
         return [m(".italic", "None")];
       } else {
@@ -205,6 +205,7 @@ class App {
       m(".spacer"),
       m(
         ".button-row",
+        m(".flex-spacer"),
         m(
           "button",
           { disabled: !activeGame.canUndo(), onclick: () => activeGame.undo() },
@@ -228,6 +229,18 @@ class App {
           "button",
           { disabled: !activeGame.canRedo(), onclick: () => activeGame.redo() },
           "Redo"
+        ),
+        m(".flex-spacer"),
+        m(
+          "button",
+          {
+            onclick: () => {
+              if (confirm("End fight?")) {
+                this._activeGame = null;
+              }
+            }
+          },
+          "End fight"
         )
       )
     );
