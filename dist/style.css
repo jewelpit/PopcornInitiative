@@ -10,6 +10,7 @@ h1 {
   margin-left: -0.75em;
   margin-right: -0.75em;
   padding: 0.25em 1.5em 0.25em 1.5em;
+  text-shadow: 4px 4px 4px #000000;
 }
 
 .wrapper {
