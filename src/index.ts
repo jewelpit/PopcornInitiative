@@ -30,6 +30,7 @@ interface SingleState {
   waitingPlayers: string[];
   actedPlayers: string[];
   deadPlayers: string[];
+  addedPlayers: string[];
 }
 
 class GameState {
@@ -126,7 +127,8 @@ class App {
               this._activeGame = new GameState({
                 waitingPlayers: this._entities,
                 actedPlayers: [],
-                deadPlayers: []
+                deadPlayers: [],
+                addedPlayers: []
               });
             }
           }
@@ -198,6 +200,27 @@ class App {
           renderEntity(entity, "waiting", idx)
         )
       ),
+      m("input", { type: "text", id: "new-entity" }),
+      m(
+        "button",
+        {
+          onclick: () => {
+            const entity = document.getElementById("new-entity");
+            if (entity != null) {
+              const text = (entity as any).value as string | undefined | null;
+              if (text != null && text !== "") {
+                activeGame.push({
+                  ...currentState,
+                  waitingPlayers: currentState.waitingPlayers.concat(text),
+                  addedPlayers: currentState.addedPlayers.concat(text)
+                });
+              }
+              (entity as any).value = "";
+            }
+          }
+        },
+        "Add new combatant"
+      ),
       m("h1", "Dead"),
       renderList(
         currentState.deadPlayers.map((entity, idx) =>
@@ -239,6 +262,9 @@ class App {
             onclick: () => {
               if (confirm("End fight?")) {
                 this._activeGame = null;
+                this._entities = this._entities.concat(
+                  currentState.addedPlayers
+                );
               }
             }
           },
@@ -271,6 +297,7 @@ class App {
         ? currentState.waitingPlayers[idx]
         : currentState.actedPlayers[idx];
     activeGame.push({
+      ...currentState,
       waitingPlayers:
         entityType === "waiting"
           ? without(currentState.waitingPlayers, idx)
