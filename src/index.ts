@@ -148,13 +148,13 @@ class App {
       idx: number
     ) =>
       m(
-        entityType === "acted"
-          ? ".entity .acted"
-          : entityType === "dead"
-          ? ".entity .dead"
-          : ".entity",
+        ".entity",
         m(
-          ".entity-text",
+          entityType === "acted"
+            ? ".entity-text .acted"
+            : entityType === "dead"
+            ? ".entity-text .dead"
+            : ".entity-text",
           {
             onclick: () => {
               if (entityType === "waiting") {
@@ -176,7 +176,17 @@ class App {
                 "☠️"
               )
             ]
-          : []
+          : [
+              m(
+                ".close-button",
+                {
+                  onclick: () => {
+                    App._revive(activeGame, idx);
+                  }
+                },
+                "😇️"
+              )
+            ]
       );
 
     const renderList = (list: m.Vnode[]) => {
@@ -308,6 +318,17 @@ class App {
           ? without(currentState.actedPlayers, idx)
           : currentState.actedPlayers,
       deadPlayers: currentState.deadPlayers.concat([deadPlayer])
+    });
+  }
+
+  private static _revive(activeGame: GameState, idx: number) {
+    const currentState = activeGame.current();
+    activeGame.push({
+      ...currentState,
+      waitingPlayers: currentState.waitingPlayers.concat(
+        currentState.deadPlayers[idx]
+      ),
+      deadPlayers: without(currentState.deadPlayers, idx)
     });
   }
 }
