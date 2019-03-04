@@ -112,6 +112,7 @@ class App {
                 this._entities.push(text);
               }
               (entity as any).value = "";
+              entity.focus();
             }
           }
         },
