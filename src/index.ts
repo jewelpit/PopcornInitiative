@@ -118,7 +118,6 @@ class App {
         },
         "Add new combatant"
       ),
-      m(".spacer"),
       m(
         "button",
         {
@@ -238,7 +237,6 @@ class App {
           renderEntity(entity, "dead", idx)
         )
       ),
-      m(".spacer"),
       m(
         ".button-row",
         m(".flex-spacer"),
