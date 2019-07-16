@@ -88,7 +88,7 @@ class App {
   private _main() {
     return m(
       "div",
-      m("h1", "Combatants"),
+      m("h2", "Combatants"),
       this._entities.map((entity, idx) =>
         m(
           ".entity",
@@ -198,13 +198,13 @@ class App {
 
     return m(
       "div",
-      m("h1", "Already acted"),
+      m("h2", "Already acted"),
       renderList(
         currentState.actedPlayers.map((entity, idx) =>
           renderEntity(entity, "acted", idx)
         )
       ),
-      m("h1", "Waiting to act"),
+      m("h2", "Waiting to act"),
       renderList(
         currentState.waitingPlayers.map((entity, idx) =>
           renderEntity(entity, "waiting", idx)
@@ -231,7 +231,7 @@ class App {
         },
         "Add new combatant"
       ),
-      m("h1", "Dead"),
+      m("h2", "Dead"),
       renderList(
         currentState.deadPlayers.map((entity, idx) =>
           renderEntity(entity, "dead", idx)
