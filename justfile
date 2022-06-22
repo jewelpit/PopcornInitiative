@@ -1,11 +1,11 @@
 default:
     just --list
 
-build-image:
-    docker build -t popcorn-initiative --progress plain .
+install-deps:
+    npm install
 
-serve: build-image
-    docker run --rm -it popcorn-initiative npm run watch
+serve: install-deps
+    npm run watch
 
-build: build-image
-    docker run --rm -it -v $(pwd)/dist/gen:/app/dist/gen popcorn-initiative npm run build
+build: install-deps
+    npm run build
